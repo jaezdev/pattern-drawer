@@ -1,9 +1,13 @@
-module.exports = {
+import postcssImport from 'postcss-import';
+import autoprefixer from 'autoprefixer';
+import cssnano from 'cssnano';
+
+export default {
   plugins: [
-    require('postcss-import'),
-    require('autoprefixer'),
+    postcssImport,
+    autoprefixer,
     ...(process.env.NODE_ENV === 'production' 
-      ? [require('cssnano')({ preset: 'default' })] 
+      ? [cssnano({ preset: 'default' })] 
       : [])
   ]
 };
