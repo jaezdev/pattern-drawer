@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Code with Pattern Modal</title>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .pattern-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            max-width: 240px;
+            margin: 0 auto;
+            aspect-ratio: 1;
+            position: relative;
+        }
+
+        .dot {
+            width: 60px;
+            height: 60px;
+            border: 2px solid #374151;
+            border-radius: 50%;
+            background: #1f2937;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .dot:hover {
+            border-color: #6b7280;
+            background: #374151;
+        }
+
+        .dot.active {
+            background: #ffffff;
+            border-color: #ffffff;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+
+        .dot.selected {
+            background: #ffffff;
+            border-color: #ffffff;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+        }
+
+        #patternCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .pattern-icon {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
+        /* Disable drawing in view mode */
+        .view-mode .dot {
+            cursor: default;
+        }
+    </style>
+</head>
+<body class="bg-base-100 min-h-screen p-4">
+    <div class="max-w-md mx-auto">
+        <div class="card bg-base-100 shadow-xl">
+            <div class="card-body">
+                <h2 class="card-title text-center justify-center mb-6">User Code</h2>
+                
+                <!-- Input Section -->
+                <div class="form-control w-full">
+                    <label class="label">
+                        <span class="label-text">Enter Code</span>
+                    </label>
+                    <div class="flex gap-2">
+                        <input 
+                            type="text" 
+                            id="userCode" 
+                            placeholder="Enter user code" 
+                            class="input input-bordered flex-1 font-mono"
+                        />
+                        <button 
+                            class="btn btn-square btn-outline" 
+                            onclick="openPatternModal()"
+                            title="Draw Pattern"
+                        >
+                            <svg class="pattern-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="5" cy="5" r="2"/>
+                                <circle cx="12" cy="5" r="2"/>
+                                <circle cx="19" cy="5" r="2"/>
+                                <circle cx="5" cy="12" r="2"/>
+                                <circle cx="12" cy="12" r="2"/>
+                                <circle cx="19" cy="12" r="2"/>
+                                <circle cx="5" cy="19" r="2"/>
+                                <circle cx="12" cy="19" r="2"/>
+                                <circle cx="19" cy="19" r="2"/>
+                                <path d="M5 5L12 12L19 5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <label class="label">
+                        <span class="label-text-alt">Enter code manually or use pattern drawer</span>
+                    </label>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="card-actions justify-end mt-6">
+                    <button class="btn btn-ghost" onclick="clearCode()">Clear</button>
+                    <button class="btn btn-primary" onclick="saveCode()">Save Code</button>
+                </div>
+
+                <!-- Status Alert -->
+                <div id="statusAlert" style="display: none;" class="alert mt-4">
+                    <span id="statusMessage"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pattern Modal -->
+    <dialog id="patternModal" class="modal">
+        <div class="modal-box max-w-md bg-slate-800 text-white">
+            <h3 class="font-bold text-lg mb-6 text-center" id="modalTitle">Draw Lock Pattern</h3>
+            
+            <!-- Pattern Grid -->
+            <div class="bg-slate-900 p-6 rounded-lg mb-6" id="patternContainer">
+                <div class="pattern-grid" id="patternGrid">
+                    <canvas id="patternCanvas"></canvas>
+                    <div class="dot" data-index="0"></div>
+                    <div class="dot" data-index="1"></div>
+                    <div class="dot" data-index="2"></div>
+                    <div class="dot" data-index="3"></div>
+                    <div class="dot" data-index="4"></div>
+                    <div class="dot" data-index="5"></div>
+                    <div class="dot" data-index="6"></div>
+                    <div class="dot" data-index="7"></div>
+                    <div class="dot" data-index="8"></div>
+                </div>
+            </div>
+
+            <!-- Pattern Status -->
+            <div id="patternStatus" class="text-center text-sm text-slate-400 mb-4">
+                Draw a pattern with at least 4 points
+            </div>
+
+            <!-- Pattern Info (only visible in view mode) -->
+            <div id="patternInfo" class="bg-slate-700 p-4 rounded-lg mb-4 text-sm" style="display: none;">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-slate-300">Pattern:</span>
+                    <span class="font-mono text-white" id="modalPatternSequence"></span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-slate-300">Length:</span>
+                    <span class="text-white" id="modalPatternLength"></span> points
+                </div>
+            </div>
+
+            <!-- Modal Actions -->
+            <div class="modal-action">
+                <div id="drawActions">
+                    <button class="btn btn-ghost text-white hover:bg-slate-700" onclick="clearPattern()">Clear</button>
+                    <button class="btn btn-outline border-slate-600 text-white hover:bg-slate-700" onclick="closePatternModal()">Cancel</button>
+                    <button class="btn btn-primary bg-white text-black hover:bg-gray-200 border-white" onclick="applyPattern()">Apply Pattern</button>
+                </div>
+                <div id="viewActions" style="display: none;">
+                    <button class="btn btn-primary bg-white text-black hover:bg-gray-200 border-white" onclick="closePatternModal()">Close</button>
+                </div>
+            </div>
+        </div>
+        <form method="dialog" class="modal-backdrop">
+            <button onclick="closePatternModal()">close</button>
+        </form>
+    </dialog>
+
+    <script>
+        class PatternDrawer {
+            constructor(canvasId, gridId) {
+                this.pattern = [];
+                this.isDrawing = false;
+                this.canvas = document.getElementById(canvasId);
+                this.ctx = this.canvas ? this.canvas.getContext('2d') : null;
+                this.dots = document.querySelectorAll(`#${gridId} .dot`);
+                this.dotPositions = [];
+                this.disabled = false;
+                
+                if (this.canvas) {
+                    this.init();
+                }
+            }
+
+            init() {
+                this.setupCanvas();
+                this.setupEventListeners();
+                this.calculateDotPositions();
+            }
+
+            setupCanvas() {
+                const grid = this.canvas.parentElement;
+                const rect = grid.getBoundingClientRect();
+                this.canvas.width = rect.width;
+                this.canvas.height = rect.height;
+            }
+
+            calculateDotPositions() {
+                this.dots.forEach((dot, index) => {
+                    const rect = dot.getBoundingClientRect();
+                    const gridRect = this.canvas.parentElement.getBoundingClientRect();
+                    this.dotPositions[index] = {
+                        x: rect.left - gridRect.left + rect.width / 2,
+                        y: rect.top - gridRect.top + rect.height / 2
+                    };
+                });
+            }
+
+            setupEventListeners() {
+                this.dots.forEach((dot, index) => {
+                    dot.addEventListener('mousedown', (e) => this.startPattern(e, index));
+                    dot.addEventListener('mouseenter', (e) => this.addToPattern(e, index));
+                    dot.addEventListener('touchstart', (e) => {
+                        e.preventDefault();
+                        this.startPattern(e, index);
+                    });
+                    dot.addEventListener('touchmove', (e) => {
+                        e.preventDefault();
+                        const touch = e.touches[0];
+                        const element = document.elementFromPoint(touch.clientX, touch.clientY);
+                        if (element && element.classList.contains('dot')) {
+                            const touchIndex = parseInt(element.dataset.index);
+                            this.addToPattern(e, touchIndex);
+                        }
+                    });
+                });
+
+                document.addEventListener('mouseup', () => this.endPattern());
+                document.addEventListener('touchend', () => this.endPattern());
+            }
+
+            startPattern(e, index) {
+                if (this.disabled) return;
+                e.preventDefault();
+                this.isDrawing = true;
+                this.clearCanvas();
+                this.resetDots();
+                this.pattern = [index];
+                this.dots[index].classList.add('active');
+                this.updateStatus('Drawing pattern...');
+            }
+
+            addToPattern(e, index) {
+                if (this.disabled || !this.isDrawing || this.pattern.includes(index)) return;
+                
+                this.pattern.push(index);
+                this.dots[index].classList.add('active');
+                this.drawLines();
+            }
+
+            endPattern() {
+                if (this.disabled || !this.isDrawing) return;
+                
+                this.isDrawing = false;
+                this.dots.forEach(dot => {
+                    if (dot.classList.contains('active')) {
+                        dot.classList.remove('active');
+                        dot.classList.add('selected');
+                    }
+                });
+
+                if (this.pattern.length < 4) {
+                    this.updateStatus('Pattern must have at least 4 points');
+                    setTimeout(() => this.clearPattern(), 2000);
+                } else {
+                    this.updateStatus(`Pattern ready (${this.pattern.length} points)`);
+                }
+            }
+
+            drawLines() {
+                if (!this.ctx || this.pattern.length < 2) return;
+                
+                this.clearCanvas();
+                
+                // Verify we have valid dot positions
+                let validPositions = true;
+                for (let index of this.pattern) {
+                    if (!this.dotPositions[index] || this.dotPositions[index].x === 0) {
+                        validPositions = false;
+                        break;
+                    }
+                }
+                
+                if (!validPositions) {
+                    // Recalculate positions if they're invalid
+                    this.calculateDotPositions();
+                }
+
+                // Draw connecting lines
+                this.ctx.strokeStyle = '#ffffff';
+                this.ctx.lineWidth = 3;
+                this.ctx.lineCap = 'round';
+                this.ctx.lineJoin = 'round';
+                this.ctx.shadowColor = 'rgba(255, 255, 255, 0.3)';
+                this.ctx.shadowBlur = 5;
+
+                this.ctx.beginPath();
+                const firstDot = this.dotPositions[this.pattern[0]];
+                if (firstDot) {
+                    this.ctx.moveTo(firstDot.x, firstDot.y);
+
+                    for (let i = 1; i < this.pattern.length; i++) {
+                        const dot = this.dotPositions[this.pattern[i]];
+                        if (dot) {
+                            this.ctx.lineTo(dot.x, dot.y);
+                        }
+                    }
+                    
+                    this.ctx.stroke();
+
+                    // Draw connection points
+                    this.ctx.shadowBlur = 0;
+                    this.ctx.fillStyle = '#ffffff';
+                    this.pattern.forEach(index => {
+                        const pos = this.dotPositions[index];
+                        if (pos) {
+                            this.ctx.beginPath();
+                            this.ctx.arc(pos.x, pos.y, 4, 0, 2 * Math.PI);
+                            this.ctx.fill();
+                        }
+                    });
+                }
+            }
+
+            clearCanvas() {
+                if (this.ctx) {
+                    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                }
+            }
+
+            resetDots() {
+                this.dots.forEach(dot => {
+                    dot.classList.remove('active', 'selected');
+                });
+            }
+
+            clearPattern() {
+                if (this.disabled) return;
+                this.pattern = [];
+                this.isDrawing = false;
+                this.clearCanvas();
+                this.resetDots();
+                this.updateStatus('Draw a pattern with at least 4 points');
+            }
+
+            updateStatus(message) {
+                const statusEl = document.getElementById('patternStatus');
+                if (statusEl) {
+                    statusEl.textContent = message;
+                }
+            }
+
+            loadPattern(patternArray) {
+                if (!patternArray || patternArray.length === 0) return;
+                
+                this.clearCanvas();
+                this.resetDots();
+                this.pattern = [...patternArray];
+                
+                // Ensure canvas is properly sized
+                this.setupCanvas();
+                this.calculateDotPositions();
+                
+                this.pattern.forEach(index => {
+                    if (this.dots[index]) {
+                        this.dots[index].classList.add('selected');
+                    }
+                });
+                
+                // Draw lines with a small delay to ensure everything is ready
+                requestAnimationFrame(() => {
+                    this.drawLines();
+                });
+            }
+
+            setDisabled(disabled) {
+                this.disabled = disabled;
+                const container = document.getElementById('patternContainer');
+                if (disabled) {
+                    container.classList.add('view-mode');
+                } else {
+                    container.classList.remove('view-mode');
+                }
+            }
+        }
+
+        // Global instances
+        let mainPatternDrawer;
+        let currentMode = 'draw'; // 'draw' or 'view'
+        let savedUserCode = '';
+
+        // Initialize when page loads
+        window.addEventListener('load', () => {
+            mainPatternDrawer = new PatternDrawer('patternCanvas', 'patternGrid');
+        });
+
+        // Utility functions
+        function isPatternSequence(value) {
+            if (!value || typeof value !== 'string') return false;
+            const parts = value.split(',');
+            if (parts.length < 4 || parts.length > 9) return false;
+            return parts.every(part => {
+                const num = parseInt(part.trim());
+                return !isNaN(num) && num >= 0 && num <= 8;
+            });
+        }
+
+        function showStatus(message, type = 'info') {
+            const alert = document.getElementById('statusAlert');
+            const messageEl = document.getElementById('statusMessage');
+            
+            messageEl.textContent = message;
+            alert.className = `alert mt-4 alert-${type}`;
+            alert.style.display = 'flex';
+            
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 3000);
+        }
+
+        // Modal functions
+        function openPatternModal() {
+            const userCode = document.getElementById('userCode').value.trim();
+            
+            // Show modal first
+            document.getElementById('patternModal').showModal();
+            
+            // Check if we have a saved pattern to view
+            if (savedUserCode && isPatternSequence(savedUserCode)) {
+                currentMode = 'view';
+                const sequence = savedUserCode.split(',').map(n => parseInt(n.trim()));
+                setupModalForView(sequence);
+            } else {
+                currentMode = 'draw';
+                setupModalForDraw();
+            }
+        }
+
+        function setupModalForDraw() {
+            document.getElementById('modalTitle').textContent = 'Draw Lock Pattern';
+            document.getElementById('patternStatus').textContent = 'Draw a pattern with at least 4 points';
+            document.getElementById('patternStatus').style.display = 'block';
+            document.getElementById('patternInfo').style.display = 'none';
+            document.getElementById('drawActions').style.display = 'flex';
+            document.getElementById('viewActions').style.display = 'none';
+            mainPatternDrawer.setDisabled(false);
+            
+            // Ensure canvas is properly set up for drawing mode
+            setTimeout(() => {
+                mainPatternDrawer.setupCanvas();
+                mainPatternDrawer.calculateDotPositions();
+                mainPatternDrawer.clearPattern();
+            }, 100);
+        }
+
+        function setupModalForView(sequence) {
+            document.getElementById('modalTitle').textContent = 'Your Lock Pattern';
+            document.getElementById('patternStatus').style.display = 'none';
+            
+            // Show pattern info
+            document.getElementById('modalPatternSequence').textContent = sequence.join(',');
+            document.getElementById('modalPatternLength').textContent = sequence.length;
+            document.getElementById('patternInfo').style.display = 'block';
+            
+            // Switch action buttons
+            document.getElementById('drawActions').style.display = 'none';
+            document.getElementById('viewActions').style.display = 'flex';
+            
+            // Disable drawing and load pattern
+            mainPatternDrawer.setDisabled(true);
+            
+            // Use requestAnimationFrame for better timing and multiple attempts to ensure proper rendering
+            setTimeout(() => {
+                mainPatternDrawer.setupCanvas();
+                mainPatternDrawer.calculateDotPositions();
+                
+                // Use requestAnimationFrame to ensure the layout is complete
+                requestAnimationFrame(() => {
+                    mainPatternDrawer.setupCanvas();
+                    mainPatternDrawer.calculateDotPositions();
+                    mainPatternDrawer.loadPattern(sequence);
+                    
+                    // Double-check and redraw if needed
+                    setTimeout(() => {
+                        if (mainPatternDrawer.pattern.length > 0) {
+                            mainPatternDrawer.drawLines();
+                        }
+                    }, 50);
+                });
+            }, 150);
+        }
+
+        function closePatternModal() {
+            document.getElementById('patternModal').close();
+            if (currentMode === 'draw') {
+                mainPatternDrawer.clearPattern();
+            }
+            mainPatternDrawer.setDisabled(false);
+        }
+
+        function clearPattern() {
+            if (currentMode === 'draw') {
+                mainPatternDrawer.clearPattern();
+            }
+        }
+
+        function applyPattern() {
+            if (currentMode !== 'draw') return;
+            
+            if (mainPatternDrawer.pattern.length < 4) {
+                showStatus('Pattern must have at least 4 points', 'error');
+                return;
+            }
+            
+            const patternString = mainPatternDrawer.pattern.join(',');
+            document.getElementById('userCode').value = patternString;
+            document.getElementById('patternModal').close();
+            mainPatternDrawer.clearPattern();
+            showStatus('Pattern applied to code field', 'success');
+        }
+
+        // Main actions
+        function clearCode() {
+            document.getElementById('userCode').value = '';
+            savedUserCode = '';
+            document.getElementById('statusAlert').style.display = 'none';
+        }
+
+        function saveCode() {
+            const userCode = document.getElementById('userCode').value.trim();
+            
+            if (!userCode) {
+                showStatus('Please enter a code or draw a pattern', 'error');
+                return;
+            }
+
+            // Save the code
+            savedUserCode = userCode;
+
+            // Simulate saving to database
+            console.log('Saving to database user_code field:', userCode);
+            
+            if (isPatternSequence(userCode)) {
+                showStatus('Pattern saved successfully! Click the pattern button to view it.', 'success');
+            } else {
+                showStatus('Code saved successfully!', 'success');
+            }
+
+            // Example API call:
+            /*
+            fetch('/api/save-user-code', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_code: userCode })
+            });
+            */
+        }
+    </script>
+</body>
+</html>

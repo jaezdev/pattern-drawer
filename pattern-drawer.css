@@ -1,0 +1,334 @@
+/**
+ * Pattern Drawer CSS Library
+ * Modular, theme-based styles with CSS custom properties
+ */
+
+/* CSS Custom Properties / Variables */
+:root {
+  /* Base dimensions */
+  --pattern-drawer-size: 240px;
+  --pattern-drawer-dot-size: 60px;
+  --pattern-drawer-gap: 20px;
+  --pattern-drawer-line-width: 3px;
+  --pattern-drawer-border-width: 2px;
+
+  /* Animation settings */
+  --pattern-drawer-transition: all 0.2s ease;
+  --pattern-drawer-animation-duration: 200ms;
+
+  /* Z-index layers */
+  --pattern-drawer-canvas-z: 10;
+  --pattern-drawer-dot-z: 5;
+}
+
+/* Dark Theme (default) */
+:root,
+.pattern-drawer--dark {
+  --pattern-drawer-bg: #1f2937;
+  --pattern-drawer-container-bg: #0f172a;
+  --pattern-drawer-dot-bg: #374151;
+  --pattern-drawer-dot-border: #374151;
+  --pattern-drawer-dot-hover-bg: #4b5563;
+  --pattern-drawer-dot-hover-border: #6b7280;
+  --pattern-drawer-dot-active-bg: #ffffff;
+  --pattern-drawer-dot-active-border: #ffffff;
+  --pattern-drawer-dot-selected-bg: #ffffff;
+  --pattern-drawer-dot-selected-border: #ffffff;
+  --pattern-drawer-line-color: #ffffff;
+  --pattern-drawer-line-shadow: rgba(255, 255, 255, 0.3);
+  --pattern-drawer-glow: rgba(255, 255, 255, 0.2);
+}
+
+/* Light Theme */
+.pattern-drawer--light {
+  --pattern-drawer-bg: #f8fafc;
+  --pattern-drawer-container-bg: #ffffff;
+  --pattern-drawer-dot-bg: #e2e8f0;
+  --pattern-drawer-dot-border: #cbd5e1;
+  --pattern-drawer-dot-hover-bg: #d1d5db;
+  --pattern-drawer-dot-hover-border: #9ca3af;
+  --pattern-drawer-dot-active-bg: #3b82f6;
+  --pattern-drawer-dot-active-border: #3b82f6;
+  --pattern-drawer-dot-selected-bg: #3b82f6;
+  --pattern-drawer-dot-selected-border: #3b82f6;
+  --pattern-drawer-line-color: #3b82f6;
+  --pattern-drawer-line-shadow: rgba(59, 130, 246, 0.3);
+  --pattern-drawer-glow: rgba(59, 130, 246, 0.2);
+}
+
+/* Blue Theme */
+.pattern-drawer--blue {
+  --pattern-drawer-bg: #0f172a;
+  --pattern-drawer-container-bg: #1e293b;
+  --pattern-drawer-dot-bg: #334155;
+  --pattern-drawer-dot-border: #475569;
+  --pattern-drawer-dot-hover-bg: #475569;
+  --pattern-drawer-dot-hover-border: #64748b;
+  --pattern-drawer-dot-active-bg: #0ea5e9;
+  --pattern-drawer-dot-active-border: #0ea5e9;
+  --pattern-drawer-dot-selected-bg: #0ea5e9;
+  --pattern-drawer-dot-selected-border: #0ea5e9;
+  --pattern-drawer-line-color: #0ea5e9;
+  --pattern-drawer-line-shadow: rgba(14, 165, 233, 0.4);
+  --pattern-drawer-glow: rgba(14, 165, 233, 0.3);
+}
+
+/* Green Theme */
+.pattern-drawer--green {
+  --pattern-drawer-bg: #0c1910;
+  --pattern-drawer-container-bg: #1a2e1a;
+  --pattern-drawer-dot-bg: #2d4a2d;
+  --pattern-drawer-dot-border: #3f6b3f;
+  --pattern-drawer-dot-hover-bg: #3f6b3f;
+  --pattern-drawer-dot-hover-border: #4ade80;
+  --pattern-drawer-dot-active-bg: #10b981;
+  --pattern-drawer-dot-active-border: #10b981;
+  --pattern-drawer-dot-selected-bg: #10b981;
+  --pattern-drawer-dot-selected-border: #10b981;
+  --pattern-drawer-line-color: #10b981;
+  --pattern-drawer-line-shadow: rgba(16, 185, 129, 0.4);
+  --pattern-drawer-glow: rgba(16, 185, 129, 0.3);
+}
+
+/* Base Container Styles */
+.pattern-drawer {
+  position: relative;
+  background: var(--pattern-drawer-container-bg);
+  border-radius: 12px;
+  padding: 24px;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+.pattern-drawer * {
+  box-sizing: border-box;
+}
+
+/* Grid Layout */
+.pattern-drawer__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--pattern-drawer-gap);
+  max-width: var(--pattern-drawer-size);
+  margin: 0 auto;
+  aspect-ratio: 1;
+  position: relative;
+}
+
+.pattern-drawer__grid--4x4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.pattern-drawer__grid--5x5 {
+  grid-template-columns: repeat(5, 1fr);
+}
+
+/* Canvas */
+.pattern-drawer__canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: var(--pattern-drawer-canvas-z);
+}
+
+/* Dots */
+.pattern-drawer__dot {
+  width: var(--pattern-drawer-dot-size);
+  height: var(--pattern-drawer-dot-size);
+  border: var(--pattern-drawer-border-width) solid var(--pattern-drawer-dot-border);
+  border-radius: 50%;
+  background: var(--pattern-drawer-dot-bg);
+  cursor: pointer;
+  transition: var(--pattern-drawer-transition);
+  position: relative;
+  z-index: var(--pattern-drawer-dot-z);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pattern-drawer__dot:hover {
+  border-color: var(--pattern-drawer-dot-hover-border);
+  background: var(--pattern-drawer-dot-hover-bg);
+  transform: scale(1.05);
+}
+
+.pattern-drawer__dot--active {
+  background: var(--pattern-drawer-dot-active-bg) !important;
+  border-color: var(--pattern-drawer-dot-active-border) !important;
+  box-shadow: 0 0 20px var(--pattern-drawer-glow);
+  transform: scale(1.1);
+}
+
+.pattern-drawer__dot--selected {
+  background: var(--pattern-drawer-dot-selected-bg) !important;
+  border-color: var(--pattern-drawer-dot-selected-border) !important;
+  box-shadow: 0 0 15px var(--pattern-drawer-glow);
+}
+
+/* Animation for dot selection */
+@keyframes pattern-drawer-dot-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.pattern-drawer__dot--animated {
+  animation: pattern-drawer-dot-pulse var(--pattern-drawer-animation-duration) ease-in-out;
+}
+
+/* States */
+.pattern-drawer--drawing .pattern-drawer__dot {
+  cursor: crosshair;
+}
+
+.pattern-drawer--viewing .pattern-drawer__dot,
+.pattern-drawer--disabled .pattern-drawer__dot {
+  cursor: default;
+  pointer-events: none;
+}
+
+.pattern-drawer--viewing .pattern-drawer__dot:hover {
+  transform: none;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  :root {
+    --pattern-drawer-size: 200px;
+    --pattern-drawer-dot-size: 50px;
+    --pattern-drawer-gap: 15px;
+  }
+  
+  .pattern-drawer {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 320px) {
+  :root {
+    --pattern-drawer-size: 180px;
+    --pattern-drawer-dot-size: 45px;
+    --pattern-drawer-gap: 12px;
+  }
+}
+
+/* High DPI Displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .pattern-drawer__canvas {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .pattern-drawer__dot {
+    transition: none;
+  }
+  
+  .pattern-drawer__dot--animated {
+    animation: none;
+  }
+}
+
+/* Focus styles for accessibility */
+.pattern-drawer__dot:focus {
+  outline: 2px solid var(--pattern-drawer-line-color);
+  outline-offset: 2px;
+}
+
+/* Custom dot sizes */
+.pattern-drawer--small {
+  --pattern-drawer-size: 180px;
+  --pattern-drawer-dot-size: 45px;
+  --pattern-drawer-gap: 15px;
+}
+
+.pattern-drawer--large {
+  --pattern-drawer-size: 320px;
+  --pattern-drawer-dot-size: 80px;
+  --pattern-drawer-gap: 30px;
+}
+
+/* Pattern complexity indicators */
+.pattern-drawer__complexity {
+  margin-top: 12px;
+  text-align: center;
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.pattern-drawer__complexity--very-weak { color: #ef4444; }
+.pattern-drawer__complexity--weak { color: #f97316; }
+.pattern-drawer__complexity--medium { color: #eab308; }
+.pattern-drawer__complexity--strong { color: #22c55e; }
+.pattern-drawer__complexity--very-strong { color: #10b981; }
+
+/* Pattern info display */
+.pattern-drawer__info {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 12px;
+  border-radius: 8px;
+  margin-top: 16px;
+  font-size: 14px;
+}
+
+.pattern-drawer__info-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.pattern-drawer__info-row:last-child {
+  margin-bottom: 0;
+}
+
+.pattern-drawer__info-label {
+  opacity: 0.8;
+}
+
+.pattern-drawer__info-value {
+  font-family: monospace;
+  font-weight: bold;
+}
+
+/* Loading state */
+.pattern-drawer--loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.pattern-drawer--loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 24px;
+  height: 24px;
+  margin: -12px 0 0 -12px;
+  border: 2px solid transparent;
+  border-top-color: var(--pattern-drawer-line-color);
+  border-radius: 50%;
+  animation: pattern-drawer-spin 1s linear infinite;
+}
+
+@keyframes pattern-drawer-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Error state */
+.pattern-drawer--error {
+  border: 2px solid #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+}
+
+/* Success state */
+.pattern-drawer--success {
+  border: 2px solid #22c55e;
+  background: rgba(34, 197, 94, 0.1);
+}
