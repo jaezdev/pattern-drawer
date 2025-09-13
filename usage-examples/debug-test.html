@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pattern Drawer Debug Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        .debug-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        #pattern-container {
+            border: 2px solid #007acc;
+            min-height: 300px;
+            margin: 20px 0;
+            background: #fafafa;
+        }
+        .debug-log {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="debug-container">
+        <h1>Pattern Drawer Debug Test</h1>
+        <div id="debug-log" class="debug-log">Starting debug test...\n</div>
+    </div>
+
+    <div class="debug-container">
+        <h2>Pattern Container</h2>
+        <div id="pattern-container"></div>
+        <button onclick="testInit()">Test Initialize</button>
+        <button onclick="testElements()">Check Elements</button>
+    </div>
+
+    <script>
+        function log(message) {
+            const debugLog = document.getElementById('debug-log');
+            const timestamp = new Date().toLocaleTimeString();
+            debugLog.textContent += `[${timestamp}] ${message}\n`;
+            debugLog.scrollTop = debugLog.scrollHeight;
+            console.log(message);
+        }
+
+        function testElements() {
+            log('=== Element Check ===');
+            const container = document.getElementById('pattern-container');
+            log(`Container found: ${!!container}`);
+            if (container) {
+                log(`Container dimensions: ${container.offsetWidth}x${container.offsetHeight}`);
+                log(`Container innerHTML: "${container.innerHTML}"`);
+            }
+        }
+
+        function testInit() {
+            log('=== Initialization Test ===');
+            
+            // Test 1: Check if CSS file is accessible
+            const cssLink = document.createElement('link');
+            cssLink.rel = 'stylesheet';
+            cssLink.href = '../dist/pattern-drawer.css';
+            cssLink.onload = () => log('CSS loaded successfully');
+            cssLink.onerror = () => log('ERROR: CSS failed to load');
+            document.head.appendChild(cssLink);
+            
+            // Test 2: Check if JS file is accessible and load it
+            const script = document.createElement('script');
+            script.src = '../dist/pattern-drawer.umd.js';
+            script.onload = () => {
+                log('JS loaded successfully');
+                
+                // Test 3: Check PatternDrawer availability
+                setTimeout(() => {
+                    log(`PatternDrawer type: ${typeof PatternDrawer}`);
+                    if (typeof PatternDrawer !== 'undefined') {
+                        log(`PatternDrawer keys: ${Object.keys(PatternDrawer).join(', ')}`);
+                        
+                        // Test 4: Try to initialize
+                        try {
+                            const { createPatternDrawer, PRESETS } = PatternDrawer;
+                            log(`createPatternDrawer type: ${typeof createPatternDrawer}`);
+                            log(`PRESETS available: ${!!PRESETS}`);
+                            
+                            if (createPatternDrawer && PRESETS) {
+                                log('Attempting to create pattern drawer...');
+                                const drawer = createPatternDrawer('#pattern-container', PRESETS.MOBILE_LOCK);
+                                log(`Pattern drawer created: ${!!drawer}`);
+                                
+                                if (drawer) {
+                                    log('SUCCESS: Pattern drawer initialized!');
+                                    
+                                    // Check what was added to the container
+                                    const container = document.getElementById('pattern-container');
+                                    log(`Container children: ${container.children.length}`);
+                                    Array.from(container.children).forEach((child, index) => {
+                                        log(`Child ${index}: ${child.tagName} with class "${child.className}"`);
+                                    });
+                                } else {
+                                    log('ERROR: Pattern drawer creation returned null/undefined');
+                                }
+                            }
+                        } catch (error) {
+                            log(`ERROR during initialization: ${error.message}`);
+                            log(`Stack: ${error.stack}`);
+                        }
+                    } else {
+                        log('ERROR: PatternDrawer not available in global scope');
+                    }
+                }, 100);
+            };
+            script.onerror = () => log('ERROR: JS failed to load');
+            document.head.appendChild(script);
+        }
+
+        // Auto-run element check on load
+        window.addEventListener('load', () => {
+            log('Page loaded');
+            testElements();
+        });
+    </script>
+</body>
+</html>

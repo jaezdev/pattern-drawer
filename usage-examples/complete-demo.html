@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pattern Drawer - Complete Working Example</title>
+    <link rel="stylesheet" href="../dist/pattern-drawer.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(45deg, #007acc, #0099ff);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0 0 10px 0;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+        
+        .header p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .pattern-section {
+            margin: 30px 0;
+            border: 2px solid #f0f0f0;
+            border-radius: 12px;
+            padding: 25px;
+            transition: all 0.3s ease;
+        }
+        
+        .pattern-section:hover {
+            border-color: #007acc;
+            box-shadow: 0 4px 20px rgba(0,122,204,0.1);
+        }
+        
+        .pattern-section h3 {
+            margin: 0 0 15px 0;
+            color: #333;
+            font-size: 1.3em;
+        }
+        
+        .pattern-section p {
+            margin: 0 0 20px 0;
+            color: #666;
+            line-height: 1.5;
+        }
+        
+        .pattern-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+            padding: 20px;
+            background: #fafafa;
+            border-radius: 8px;
+            border: 2px dashed #ddd;
+            transition: all 0.3s ease;
+        }
+        
+        .pattern-container.active {
+            border-color: #007acc;
+            background: #f8f9ff;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .btn-primary {
+            background: #007acc;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #005a9e;
+            transform: translateY(-1px);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #545b62;
+            transform: translateY(-1px);
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #1e7e34;
+            transform: translateY(-1px);
+        }
+        
+        .info-panel {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        
+        .info-panel h4 {
+            margin: 0 0 10px 0;
+            color: #495057;
+            font-family: inherit;
+        }
+        
+        .status {
+            padding: 10px;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-weight: 500;
+        }
+        
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        .status.warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin: 30px 0;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 12px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .demo-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔐 Pattern Drawer</h1>
+            <p>Interactive Pattern Drawing Component - Complete Demo</p>
+        </div>
+        
+        <div class="content">
+            <div class="demo-grid">
+                <!-- Mobile Lock Pattern -->
+                <div class="pattern-section">
+                    <h3>📱 Mobile Lock Pattern</h3>
+                    <p>Classic Android-style lock screen pattern with 3x3 grid.</p>
+                    <div class="pattern-container" id="mobile-container">
+                        <div id="mobile-pattern"></div>
+                    </div>
+                    <div class="controls">
+                        <button class="btn btn-primary" onclick="clearPattern('mobile')">Clear</button>
+                        <button class="btn btn-secondary" onclick="loadDemo('mobile')">Load Demo</button>
+                        <button class="btn btn-success" onclick="getPattern('mobile')">Get Pattern</button>
+                    </div>
+                    <div id="mobile-info" class="info-panel">
+                        <h4>Pattern Info:</h4>
+                        <div>Status: Ready to draw</div>
+                    </div>
+                </div>
+                
+                <!-- Security Pattern -->
+                <div class="pattern-section">
+                    <h3>🔒 Security Pattern</h3>
+                    <p>High-security pattern with 4x4 grid and complexity tracking.</p>
+                    <div class="pattern-container" id="security-container">
+                        <div id="security-pattern"></div>
+                    </div>
+                    <div class="controls">
+                        <button class="btn btn-primary" onclick="clearPattern('security')">Clear</button>
+                        <button class="btn btn-secondary" onclick="loadDemo('security')">Load Demo</button>
+                        <button class="btn btn-success" onclick="getPattern('security')">Get Pattern</button>
+                    </div>
+                    <div id="security-info" class="info-panel">
+                        <h4>Pattern Info:</h4>
+                        <div>Status: Ready to draw</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Gaming Pattern -->
+            <div class="pattern-section">
+                <h3>🎮 Gaming Pattern</h3>
+                <p>Large 5x5 grid pattern perfect for gaming applications with smooth animations.</p>
+                <div class="pattern-container" id="gaming-container">
+                    <div id="gaming-pattern"></div>
+                </div>
+                <div class="controls">
+                    <button class="btn btn-primary" onclick="clearPattern('gaming')">Clear</button>
+                    <button class="btn btn-secondary" onclick="loadDemo('gaming')">Load Demo</button>
+                    <button class="btn btn-success" onclick="getPattern('gaming')">Get Pattern</button>
+                    <button class="btn btn-secondary" onclick="changeTheme('gaming')">Change Theme</button>
+                </div>
+                <div id="gaming-info" class="info-panel">
+                    <h4>Pattern Info:</h4>
+                    <div>Status: Ready to draw</div>
+                </div>
+            </div>
+            
+            <!-- Global Controls -->
+            <div class="pattern-section">
+                <h3>🎛️ Global Controls</h3>
+                <p>Test various features and compare patterns across all drawers.</p>
+                <div class="controls">
+                    <button class="btn btn-primary" onclick="clearAllPatterns()">Clear All</button>
+                    <button class="btn btn-secondary" onclick="loadAllDemos()">Load All Demos</button>
+                    <button class="btn btn-success" onclick="comparePatterns()">Compare Patterns</button>
+                    <button class="btn btn-secondary" onclick="cycleThemes()">Cycle All Themes</button>
+                </div>
+                <div id="global-status" class="status info">
+                    All pattern drawers initialized successfully! 🎉
+                </div>
+            </div>
+            
+            <!-- Pattern Validation Demo -->
+            <div class="pattern-section">
+                <h3>✅ Pattern Validation</h3>
+                <p>Test pattern validation and complexity calculation features.</p>
+                <div class="controls">
+                    <button class="btn btn-primary" onclick="validateAllPatterns()">Validate All Patterns</button>
+                    <button class="btn btn-secondary" onclick="showComplexityStats()">Show Complexity Stats</button>
+                </div>
+                <div id="validation-info" class="info-panel">
+                    <h4>Validation Results:</h4>
+                    <div>Draw some patterns and click "Validate All Patterns" to see results.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../dist/pattern-drawer.umd.js"></script>
+    <script>
+        // Global variables
+        const drawers = {};
+        const themes = ['dark', 'light', 'blue', 'green'];
+        let currentThemeIndex = 0;
+        
+        // Initialize when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                const { createPatternDrawer, PatternUtils, PRESETS, THEMES } = PatternDrawer;
+                
+                // Create different pattern drawers
+                drawers.mobile = createPatternDrawer('#mobile-pattern', PRESETS.MOBILE_LOCK, {
+                    theme: THEMES.DARK
+                });
+                
+                drawers.security = createPatternDrawer('#security-pattern', PRESETS.SECURITY, {
+                    theme: THEMES.BLUE,
+                    size: 'medium'
+                });
+                
+                drawers.gaming = createPatternDrawer('#gaming-pattern', PRESETS.GAMING, {
+                    theme: THEMES.GREEN,
+                    size: 'large'
+                });
+                
+                // Set up event listeners for each drawer
+                Object.keys(drawers).forEach(key => {
+                    const drawer = drawers[key];
+                    const container = document.getElementById(`${key}-container`);
+                    const info = document.getElementById(`${key}-info`);
+                    
+                    drawer.on('patternStart', () => {
+                        container.classList.add('active');
+                        updateInfo(key, 'Drawing pattern...', 'info');
+                    });
+                    
+                    drawer.on('patternChange', (pattern) => {
+                        updateInfo(key, `Drawing: ${pattern.length} points connected`, 'info');
+                    });
+                    
+                    drawer.on('patternComplete', (pattern) => {
+                        container.classList.remove('active');
+                        const patternString = PatternUtils.patternToString(pattern);
+                        const complexity = PatternUtils.calculateComplexity(pattern);
+                        
+                        updateInfo(key, 
+                            `Pattern: ${patternString}<br>` +
+                            `Points: ${pattern.length}<br>` +
+                            `Complexity: ${complexity.level} (Score: ${complexity.score})`, 
+                            'success'
+                        );
+                    });
+                    
+                    drawer.on('patternClear', () => {
+                        container.classList.remove('active');
+                        updateInfo(key, 'Pattern cleared - ready to draw', 'info');
+                    });
+                });
+                
+                updateGlobalStatus('All pattern drawers initialized successfully! 🎉', 'success');
+                
+            } catch (error) {
+                console.error('Initialization error:', error);
+                updateGlobalStatus('ERROR: Failed to initialize pattern drawers - ' + error.message, 'warning');
+            }
+        });
+        
+        // Helper function to update info panels
+        function updateInfo(drawer, message, type = 'info') {
+            const info = document.getElementById(`${drawer}-info`);
+            const statusClass = type === 'success' ? 'success' : type === 'warning' ? 'warning' : 'info';
+            info.innerHTML = `<h4>Pattern Info:</h4><div class="status ${statusClass}">${message}</div>`;
+        }
+        
+        function updateGlobalStatus(message, type = 'info') {
+            const status = document.getElementById('global-status');
+            status.className = `status ${type}`;
+            status.innerHTML = message;
+        }
+        
+        // Pattern control functions
+        function clearPattern(drawer) {
+            if (drawers[drawer]) {
+                drawers[drawer].clear();
+            }
+        }
+        
+        function loadDemo(drawer) {
+            if (!drawers[drawer]) return;
+            
+            const demoPatterns = {
+                mobile: [0, 1, 2, 5, 8], // L shape
+                security: [0, 1, 2, 6, 10, 14, 15], // Complex pattern
+                gaming: [0, 6, 12, 18, 24, 20, 16] // Diagonal and back
+            };
+            
+            const pattern = demoPatterns[drawer] || [0, 1, 2];
+            drawers[drawer].loadPattern(pattern);
+        }
+        
+        function getPattern(drawer) {
+            if (!drawers[drawer]) return;
+            
+            const pattern = drawers[drawer].getPattern();
+            const { PatternUtils } = PatternDrawer;
+            
+            if (pattern.length > 0) {
+                const patternString = PatternUtils.patternToString(pattern);
+                const complexity = PatternUtils.calculateComplexity(pattern);
+                
+                updateInfo(drawer, 
+                    `Current Pattern: ${patternString}<br>` +
+                    `Points: ${pattern.length}<br>` +
+                    `Complexity: ${complexity.level} (Score: ${complexity.score})<br>` +
+                    `Valid: ${PatternUtils.isValidPattern(pattern).isValid ? 'Yes' : 'No'}`, 
+                    'info'
+                );
+            } else {
+                updateInfo(drawer, 'No pattern drawn', 'warning');
+            }
+        }
+        
+        function changeTheme(drawer) {
+            if (!drawers[drawer]) return;
+            
+            currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+            const newTheme = themes[currentThemeIndex];
+            drawers[drawer].setTheme(newTheme);
+            
+            updateInfo(drawer, `Theme changed to: ${newTheme}`, 'info');
+        }
+        
+        // Global control functions
+        function clearAllPatterns() {
+            Object.keys(drawers).forEach(key => clearPattern(key));
+            updateGlobalStatus('All patterns cleared! 🧹', 'info');
+        }
+        
+        function loadAllDemos() {
+            Object.keys(drawers).forEach(key => loadDemo(key));
+            updateGlobalStatus('Demo patterns loaded for all drawers! 🎮', 'success');
+        }
+        
+        function comparePatterns() {
+            const { PatternUtils } = PatternDrawer;
+            const patterns = {};
+            
+            Object.keys(drawers).forEach(key => {
+                const pattern = drawers[key].getPattern();
+                patterns[key] = PatternUtils.patternToString(pattern);
+            });
+            
+            let comparison = '<h4>Pattern Comparison:</h4>';
+            Object.keys(patterns).forEach(key => {
+                comparison += `<div><strong>${key}:</strong> "${patterns[key] || 'None'}"</div>`;
+            });
+            
+            // Check for matches
+            const patternValues = Object.values(patterns).filter(p => p !== '');
+            const uniquePatterns = new Set(patternValues);
+            
+            if (patternValues.length > 1 && uniquePatterns.size < patternValues.length) {
+                comparison += '<div class="status success">🎯 Found matching patterns!</div>';
+            } else if (patternValues.length > 1) {
+                comparison += '<div class="status info">All patterns are unique</div>';
+            } else {
+                comparison += '<div class="status warning">Need at least 2 patterns to compare</div>';
+            }
+            
+            document.getElementById('validation-info').innerHTML = comparison;
+        }
+        
+        function cycleThemes() {
+            currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+            const newTheme = themes[currentThemeIndex];
+            
+            Object.keys(drawers).forEach(key => {
+                drawers[key].setTheme(newTheme);
+            });
+            
+            updateGlobalStatus(`All themes changed to: ${newTheme} 🎨`, 'success');
+        }
+        
+        function validateAllPatterns() {
+            const { PatternUtils } = PatternDrawer;
+            let validation = '<h4>Validation Results:</h4>';
+            let totalScore = 0;
+            let validCount = 0;
+            
+            Object.keys(drawers).forEach(key => {
+                const pattern = drawers[key].getPattern();
+                if (pattern.length > 0) {
+                    const patternString = PatternUtils.patternToString(pattern);
+                    const complexity = PatternUtils.calculateComplexity(pattern);
+                    const isValid = PatternUtils.isValidPattern(pattern);
+                    
+                    validation += `
+                        <div style="margin: 10px 0; padding: 10px; border-left: 4px solid ${isValid.isValid ? '#28a745' : '#dc3545'}; background: ${isValid.isValid ? '#d4edda' : '#f8d7da'};">
+                            <strong>${key.charAt(0).toUpperCase() + key.slice(1)}:</strong><br>
+                            Pattern: ${patternString}<br>
+                            Valid: ${isValid.isValid ? '✅ Yes' : '❌ No'}<br>
+                            ${!isValid.isValid ? `Reason: ${isValid.message}<br>` : ''}
+                            Complexity: ${complexity.level} (${complexity.score})<br>
+                            Points: ${pattern.length}
+                        </div>
+                    `;
+                    
+                    if (isValid.isValid) {
+                        validCount++;
+                        totalScore += complexity.score;
+                    }
+                } else {
+                    validation += `<div><strong>${key}:</strong> No pattern drawn</div>`;
+                }
+            });
+            
+            if (validCount > 0) {
+                const avgScore = Math.round(totalScore / validCount);
+                validation += `<div class="status success">📊 Summary: ${validCount} valid patterns, Average complexity score: ${avgScore}</div>`;
+            }
+            
+            document.getElementById('validation-info').innerHTML = validation;
+        }
+        
+        function showComplexityStats() {
+            const { PatternUtils } = PatternDrawer;
+            let stats = '<h4>Complexity Statistics:</h4>';
+            
+            const complexityLevels = { low: 0, medium: 0, high: 0, 'very-high': 0 };
+            let totalPatterns = 0;
+            
+            Object.keys(drawers).forEach(key => {
+                const pattern = drawers[key].getPattern();
+                if (pattern.length > 0) {
+                    const complexity = PatternUtils.calculateComplexity(pattern);
+                    complexityLevels[complexity.level]++;
+                    totalPatterns++;
+                }
+            });
+            
+            if (totalPatterns > 0) {
+                Object.keys(complexityLevels).forEach(level => {
+                    const count = complexityLevels[level];
+                    const percentage = Math.round((count / totalPatterns) * 100);
+                    if (count > 0) {
+                        stats += `<div>${level}: ${count} patterns (${percentage}%)</div>`;
+                    }
+                });
+                
+                stats += `<div class="status info">Total patterns analyzed: ${totalPatterns}</div>`;
+            } else {
+                stats += '<div class="status warning">No patterns to analyze</div>';
+            }
+            
+            document.getElementById('validation-info').innerHTML = stats;
+        }
+    </script>
+</body>
+</html>

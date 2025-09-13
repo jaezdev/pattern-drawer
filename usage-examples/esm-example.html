@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pattern Drawer - ES Module Example</title>
+    <link rel="stylesheet" href="../dist/pattern-drawer.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .pattern-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .pattern-box {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+        }
+        .controls {
+            margin: 20px 0;
+            text-align: center;
+        }
+        button {
+            margin: 5px;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            background: #007acc;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #005a9e;
+        }
+        #status {
+            margin-top: 20px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Pattern Drawer - ES Module Example</h1>
+        
+        <div class="pattern-grid">
+            <div class="pattern-box">
+                <h3>Security Pattern</h3>
+                <div id="security-pattern"></div>
+            </div>
+            <div class="pattern-box">
+                <h3>Gaming Pattern</h3>
+                <div id="gaming-pattern"></div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button onclick="clearAll()">Clear All</button>
+            <button onclick="comparePatterns()">Compare Patterns</button>
+            <button onclick="switchThemes()">Switch Themes</button>
+        </div>
+        
+        <div id="status">Ready to draw patterns...</div>
+    </div>
+
+    <script type="module">
+        // Import from the ES module build
+        import { 
+            createPatternDrawer, 
+            PatternDrawer,
+            PatternUtils,
+            PRESETS, 
+            THEMES, 
+            SIZES 
+        } from '../dist/pattern-drawer.esm.js';
+        
+        let securityDrawer = null;
+        let gamingDrawer = null;
+        
+        // Wait for DOM to be ready
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, initializing pattern drawers...');
+            
+            try {
+                // Create multiple pattern drawers with different configurations
+                securityDrawer = createPatternDrawer('#security-pattern', PRESETS.SECURITY, {
+                    size: SIZES.SMALL
+                });
+                
+                gamingDrawer = createPatternDrawer('#gaming-pattern', PRESETS.GAMING, {
+                    size: SIZES.SMALL
+                });
+                
+                console.log('Pattern drawers created successfully');
+                
+                let currentTheme = THEMES.DARK;
+                
+                // Event listeners
+                securityDrawer.on('patternComplete', (pattern) => {
+                    updateStatus(`Security pattern: ${PatternUtils.patternToString(pattern)} (Complexity: ${PatternUtils.calculateComplexity(pattern).level})`);
+                });
+                
+                gamingDrawer.on('patternComplete', (pattern) => {
+                    updateStatus(`Gaming pattern: ${PatternUtils.patternToString(pattern)} (Length: ${pattern.length})`);
+                });
+                
+                securityDrawer.on('patternStart', () => {
+                    updateStatus('Drawing security pattern...');
+                });
+                
+                gamingDrawer.on('patternStart', () => {
+                    updateStatus('Drawing gaming pattern...');
+                });
+                
+                // Global functions for buttons
+                window.clearAll = () => {
+                    if (securityDrawer && gamingDrawer) {
+                        securityDrawer.clear();
+                        gamingDrawer.clear();
+                        updateStatus('All patterns cleared');
+                    }
+                };
+                
+                window.comparePatterns = () => {
+                    if (!securityDrawer || !gamingDrawer) return;
+                    
+                    const secPattern = securityDrawer.getPattern();
+                    const gamePattern = gamingDrawer.getPattern();
+                    
+                    if (secPattern.length === 0 && gamePattern.length === 0) {
+                        updateStatus('No patterns to compare');
+                        return;
+                    }
+                    
+                    const secString = PatternUtils.patternToString(secPattern);
+                    const gameString = PatternUtils.patternToString(gamePattern);
+                    const match = secString === gameString && secString !== '';
+                    
+                    updateStatus(`Security: "${secString}" | Gaming: "${gameString}" | Match: ${match ? 'YES' : 'NO'}`);
+                };
+                
+                window.switchThemes = () => {
+                    if (!securityDrawer || !gamingDrawer) return;
+                    
+                    const themes = [THEMES.DARK, THEMES.LIGHT, THEMES.BLUE, THEMES.GREEN];
+                    const currentIndex = themes.indexOf(currentTheme);
+                    currentTheme = themes[(currentIndex + 1) % themes.length];
+                    
+                    securityDrawer.setTheme(currentTheme);
+                    gamingDrawer.setTheme(currentTheme);
+                    
+                    updateStatus(`Theme switched to: ${currentTheme}`);
+                };
+                
+                function updateStatus(message) {
+                    document.getElementById('status').textContent = message;
+                }
+                
+                updateStatus('ES Module example loaded successfully!');
+                
+            } catch (error) {
+                console.error('Error creating pattern drawers:', error);
+                document.getElementById('status').textContent = 'ERROR: ' + error.message;
+                return;
+            }
+        });
+    </script>
+</body>
+</html>

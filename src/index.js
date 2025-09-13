@@ -10,6 +10,7 @@
  */
 
 // Core classes
+import { PatternDrawer } from './core/PatternDrawer.js';
 export { PatternDrawer } from './core/PatternDrawer.js';
 export { PatternUtils } from './utils/index.js';
 export { EventEmitter } from './core/EventEmitter.js';

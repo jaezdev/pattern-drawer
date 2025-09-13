@@ -1,0 +1,20 @@
+{
+  "name": "my-pattern-app",
+  "version": "1.0.0",
+  "description": "Example app using pattern-drawer library",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js",
+    "build": "rollup -c",
+    "serve": "http-server dist -p 3000"
+  },
+  "dependencies": {
+    "pattern-drawer": "file:../dist"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1",
+    "rollup": "^3.0.0"
+  }
+}

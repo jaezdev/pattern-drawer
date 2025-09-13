@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pattern Drawer - UMD Example</title>
+    <!-- Include the CSS -->
+    <link rel="stylesheet" href="../dist/pattern-drawer.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        #pattern-container {
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Pattern Drawer UMD Example</h1>
+        <div id="pattern-container"></div>
+        <button onclick="clearPattern()">Clear Pattern</button>
+        <button onclick="getPattern()">Get Pattern</button>
+        <div id="output"></div>
+    </div>
+
+    <!-- Include the UMD bundle -->
+    <script src="../dist/pattern-drawer.umd.min.js"></script>
+    <script>
+        // Global variables
+        let drawer = null;
+        
+        // Wait for DOM to be ready
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, PatternDrawer available:', typeof PatternDrawer);
+            console.log('PatternDrawer contents:', Object.keys(PatternDrawer || {}));
+            
+            if (typeof PatternDrawer === 'undefined') {
+                document.getElementById('output').innerHTML = '<p style="color: red;">ERROR: PatternDrawer library not loaded!</p>';
+                return;
+            }
+            
+            try {
+                // Access the library through the global PatternDrawer object
+                const { createPatternDrawer, PRESETS, THEMES, PatternUtils } = PatternDrawer;
+                
+                if (!createPatternDrawer) {
+                    throw new Error('createPatternDrawer function not found');
+                }
+                
+                // Create a pattern drawer instance
+                drawer = createPatternDrawer('#pattern-container', PRESETS.MOBILE_LOCK, {
+                    theme: THEMES.BLUE,
+                    showComplexity: true
+                });
+                
+                console.log('Pattern drawer created:', drawer);
+                
+                // Event handlers
+                drawer.on('patternComplete', (pattern) => {
+                    const { PatternUtils } = PatternDrawer;
+                    document.getElementById('output').innerHTML = 
+                        `<p>Pattern: ${PatternUtils.patternToString(pattern)}</p>
+                         <p>Complexity: ${PatternUtils.calculateComplexity(pattern).level}</p>`;
+                });
+                
+                drawer.on('patternStart', () => {
+                    document.getElementById('output').innerHTML = '<p>Drawing pattern...</p>';
+                });
+                
+                document.getElementById('output').innerHTML = '<p style="color: green;">Pattern drawer initialized successfully! Draw a pattern above.</p>';
+                
+            } catch (error) {
+                console.error('Error initializing pattern drawer:', error);
+                document.getElementById('output').innerHTML = '<p style="color: red;">ERROR: ' + error.message + '</p>';
+            }
+        });
+        
+        function clearPattern() {
+            if (drawer) {
+                drawer.clear();
+                document.getElementById('output').innerHTML = '<p>Pattern cleared</p>';
+            } else {
+                document.getElementById('output').innerHTML = '<p style="color: red;">No drawer available</p>';
+            }
+        }
+        
+        function getPattern() {
+            if (drawer) {
+                const pattern = drawer.getPattern();
+                const { PatternUtils } = PatternDrawer;
+                if (pattern.length > 0) {
+                    document.getElementById('output').innerHTML = 
+                        `<p>Current Pattern: ${PatternUtils.patternToString(pattern)}</p>`;
+                } else {
+                    document.getElementById('output').innerHTML = '<p>No pattern drawn</p>';
+                }
+            } else {
+                document.getElementById('output').innerHTML = '<p style="color: red;">No drawer available</p>';
+            }
+        }
+    </script>
+</body>
+</html>
