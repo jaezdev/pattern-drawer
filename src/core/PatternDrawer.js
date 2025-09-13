@@ -4,7 +4,7 @@
  */
 
 import { EventEmitter } from './EventEmitter.js';
-import { PatternUtils } from './utils.js';
+import { PatternUtils } from '../utils/index.js';
 
 export class PatternDrawer extends EventEmitter {
     constructor(container, options = {}) {

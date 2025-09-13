@@ -1,0 +1,85 @@
+{
+  "name": "pattern-drawer",
+  "version": "1.0.0",
+  "description": "A configurable, themeable pattern drawing component for web applications. Perfect for creating lock screen patterns, gesture authentication, and interactive drawings.",
+  "main": "pattern-drawer.js",
+  "module": "src/index.js",
+  "types": "src/index.d.ts",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./src/index.js",
+      "require": "./dist/pattern-drawer.cjs"
+    },
+    "./styles": "./src/styles/index.css",
+    "./themes/*": "./src/styles/themes/*.css"
+  },
+  "files": [
+    "src/",
+    "dist/",
+    "pattern-drawer.js",
+    "pattern-drawer.css",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "npm run build:js && npm run build:css",
+    "build:js": "rollup -c rollup.config.js",
+    "build:css": "npm run build:css:bundle && npm run build:css:minify",
+    "build:css:bundle": "postcss src/styles/index.css -o dist/pattern-drawer.css",
+    "build:css:minify": "postcss dist/pattern-drawer.css -o dist/pattern-drawer.min.css --env production",
+    "dev": "npm run dev:css",
+    "dev:css": "postcss src/styles/index.css -o dist/pattern-drawer.css --watch",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix",
+    "test": "node tests/basic.test.js",
+    "test:watch": "nodemon tests/basic.test.js",
+    "serve": "npx http-server . -p 3000",
+    "prepare": "npm run build"
+  },
+  "keywords": [
+    "pattern",
+    "drawer",
+    "gesture",
+    "authentication",
+    "canvas",
+    "interactive",
+    "lock-screen",
+    "security",
+    "ui-component",
+    "javascript",
+    "web-component",
+    "themeable",
+    "customizable"
+  ],
+  "author": "Pattern Drawer Library",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jaezdev/pattern-drawer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jaezdev/pattern-drawer/issues"
+  },
+  "homepage": "https://github.com/jaezdev/pattern-drawer#readme",
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-terser": "^0.4.4",
+    "autoprefixer": "^10.4.16",
+    "cssnano": "^6.0.1",
+    "eslint": "^8.55.0",
+    "http-server": "^14.1.1",
+    "postcss": "^8.4.32",
+    "postcss-cli": "^11.0.0",
+    "postcss-import": "^15.1.0",
+    "rollup": "^4.6.1"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ],
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

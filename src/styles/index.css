@@ -1,0 +1,21 @@
+/**
+ * Pattern Drawer CSS Library
+ * Main entry point for all styles
+ * 
+ * Import this file to get all styles, or import individual modules as needed:
+ * - base.css - Core styles and variables
+ * - components.css - Component-specific styles
+ * - responsive.css - Responsive and accessibility styles
+ * - themes/*.css - Individual theme files
+ */
+
+/* Core styles */
+@import './base.css';
+@import './components.css';
+@import './responsive.css';
+
+/* Themes */
+@import './themes/dark.css';
+@import './themes/light.css';
+@import './themes/blue.css';
+@import './themes/green.css';

@@ -1,0 +1,20 @@
+/**
+ * Pattern Drawer Blue Theme
+ * Dark theme with blue accents
+ */
+
+.pattern-drawer--blue {
+  --pattern-drawer-bg: #0f172a;
+  --pattern-drawer-container-bg: #1e293b;
+  --pattern-drawer-dot-bg: #334155;
+  --pattern-drawer-dot-border: #475569;
+  --pattern-drawer-dot-hover-bg: #475569;
+  --pattern-drawer-dot-hover-border: #64748b;
+  --pattern-drawer-dot-active-bg: #0ea5e9;
+  --pattern-drawer-dot-active-border: #0ea5e9;
+  --pattern-drawer-dot-selected-bg: #0ea5e9;
+  --pattern-drawer-dot-selected-border: #0ea5e9;
+  --pattern-drawer-line-color: #0ea5e9;
+  --pattern-drawer-line-shadow: rgba(14, 165, 233, 0.4);
+  --pattern-drawer-glow: rgba(14, 165, 233, 0.3);
+}

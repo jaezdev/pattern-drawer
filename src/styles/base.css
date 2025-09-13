@@ -1,0 +1,177 @@
+/**
+ * Pattern Drawer Base Styles
+ * Core styles and CSS custom properties
+ */
+
+/* CSS Custom Properties / Variables */
+:root {
+  /* Base dimensions */
+  --pattern-drawer-size: 240px;
+  --pattern-drawer-dot-size: 60px;
+  --pattern-drawer-gap: 20px;
+  --pattern-drawer-line-width: 3px;
+  --pattern-drawer-border-width: 2px;
+
+  /* Animation settings */
+  --pattern-drawer-transition: all 0.2s ease;
+  --pattern-drawer-animation-duration: 200ms;
+
+  /* Z-index layers */
+  --pattern-drawer-canvas-z: 10;
+  --pattern-drawer-dot-z: 5;
+}
+
+/* Base Container Styles */
+.pattern-drawer {
+  position: relative;
+  background: var(--pattern-drawer-container-bg);
+  border-radius: 12px;
+  padding: 24px;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+.pattern-drawer * {
+  box-sizing: border-box;
+}
+
+/* Grid Layout */
+.pattern-drawer__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--pattern-drawer-gap);
+  max-width: var(--pattern-drawer-size);
+  margin: 0 auto;
+  aspect-ratio: 1;
+  position: relative;
+}
+
+.pattern-drawer__grid--4x4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.pattern-drawer__grid--5x5 {
+  grid-template-columns: repeat(5, 1fr);
+}
+
+/* Canvas */
+.pattern-drawer__canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: var(--pattern-drawer-canvas-z);
+}
+
+/* Dots */
+.pattern-drawer__dot {
+  width: var(--pattern-drawer-dot-size);
+  height: var(--pattern-drawer-dot-size);
+  border: var(--pattern-drawer-border-width) solid var(--pattern-drawer-dot-border);
+  border-radius: 50%;
+  background: var(--pattern-drawer-dot-bg);
+  cursor: pointer;
+  transition: var(--pattern-drawer-transition);
+  position: relative;
+  z-index: var(--pattern-drawer-dot-z);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pattern-drawer__dot:hover {
+  border-color: var(--pattern-drawer-dot-hover-border);
+  background: var(--pattern-drawer-dot-hover-bg);
+  transform: scale(1.05);
+}
+
+.pattern-drawer__dot--active {
+  background: var(--pattern-drawer-dot-active-bg) !important;
+  border-color: var(--pattern-drawer-dot-active-border) !important;
+  box-shadow: 0 0 20px var(--pattern-drawer-glow);
+  transform: scale(1.1);
+}
+
+.pattern-drawer__dot--selected {
+  background: var(--pattern-drawer-dot-selected-bg) !important;
+  border-color: var(--pattern-drawer-dot-selected-border) !important;
+  box-shadow: 0 0 15px var(--pattern-drawer-glow);
+}
+
+/* Animation for dot selection */
+@keyframes pattern-drawer-dot-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.pattern-drawer__dot--animated {
+  animation: pattern-drawer-dot-pulse var(--pattern-drawer-animation-duration) ease-in-out;
+}
+
+/* States */
+.pattern-drawer--drawing .pattern-drawer__dot {
+  cursor: crosshair;
+}
+
+.pattern-drawer--viewing .pattern-drawer__dot,
+.pattern-drawer--disabled .pattern-drawer__dot {
+  cursor: default;
+  pointer-events: none;
+}
+
+.pattern-drawer--viewing .pattern-drawer__dot:hover {
+  transform: none;
+}
+
+/* Custom dot sizes */
+.pattern-drawer--small {
+  --pattern-drawer-size: 180px;
+  --pattern-drawer-dot-size: 45px;
+  --pattern-drawer-gap: 15px;
+}
+
+.pattern-drawer--large {
+  --pattern-drawer-size: 320px;
+  --pattern-drawer-dot-size: 80px;
+  --pattern-drawer-gap: 30px;
+}
+
+/* Loading state */
+.pattern-drawer--loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.pattern-drawer--loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 24px;
+  height: 24px;
+  margin: -12px 0 0 -12px;
+  border: 2px solid transparent;
+  border-top-color: var(--pattern-drawer-line-color);
+  border-radius: 50%;
+  animation: pattern-drawer-spin 1s linear infinite;
+}
+
+@keyframes pattern-drawer-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Error state */
+.pattern-drawer--error {
+  border: 2px solid #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+}
+
+/* Success state */
+.pattern-drawer--success {
+  border: 2px solid #22c55e;
+  background: rgba(34, 197, 94, 0.1);
+}

@@ -1,0 +1,46 @@
+/**
+ * Pattern Drawer Components
+ * Component-specific styles for info display, complexity indicators, etc.
+ */
+
+/* Pattern complexity indicators */
+.pattern-drawer__complexity {
+  margin-top: 12px;
+  text-align: center;
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.pattern-drawer__complexity--very-weak { color: #ef4444; }
+.pattern-drawer__complexity--weak { color: #f97316; }
+.pattern-drawer__complexity--medium { color: #eab308; }
+.pattern-drawer__complexity--strong { color: #22c55e; }
+.pattern-drawer__complexity--very-strong { color: #10b981; }
+
+/* Pattern info display */
+.pattern-drawer__info {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 12px;
+  border-radius: 8px;
+  margin-top: 16px;
+  font-size: 14px;
+}
+
+.pattern-drawer__info-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.pattern-drawer__info-row:last-child {
+  margin-bottom: 0;
+}
+
+.pattern-drawer__info-label {
+  opacity: 0.8;
+}
+
+.pattern-drawer__info-value {
+  font-family: monospace;
+  font-weight: bold;
+}

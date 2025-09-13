@@ -1,0 +1,50 @@
+/**
+ * Pattern Drawer Responsive Styles
+ * Responsive design and accessibility features
+ */
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  :root {
+    --pattern-drawer-size: 200px;
+    --pattern-drawer-dot-size: 50px;
+    --pattern-drawer-gap: 15px;
+  }
+  
+  .pattern-drawer {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 320px) {
+  :root {
+    --pattern-drawer-size: 180px;
+    --pattern-drawer-dot-size: 45px;
+    --pattern-drawer-gap: 12px;
+  }
+}
+
+/* High DPI Displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .pattern-drawer__canvas {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .pattern-drawer__dot {
+    transition: none;
+  }
+  
+  .pattern-drawer__dot--animated {
+    animation: none;
+  }
+}
+
+/* Focus styles for accessibility */
+.pattern-drawer__dot:focus {
+  outline: 2px solid var(--pattern-drawer-line-color);
+  outline-offset: 2px;
+}

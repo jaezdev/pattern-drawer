@@ -1,0 +1,21 @@
+/**
+ * Pattern Drawer Dark Theme
+ * Default dark theme with white accents
+ */
+
+:root,
+.pattern-drawer--dark {
+  --pattern-drawer-bg: #1f2937;
+  --pattern-drawer-container-bg: #0f172a;
+  --pattern-drawer-dot-bg: #374151;
+  --pattern-drawer-dot-border: #374151;
+  --pattern-drawer-dot-hover-bg: #4b5563;
+  --pattern-drawer-dot-hover-border: #6b7280;
+  --pattern-drawer-dot-active-bg: #ffffff;
+  --pattern-drawer-dot-active-border: #ffffff;
+  --pattern-drawer-dot-selected-bg: #ffffff;
+  --pattern-drawer-dot-selected-border: #ffffff;
+  --pattern-drawer-line-color: #ffffff;
+  --pattern-drawer-line-shadow: rgba(255, 255, 255, 0.3);
+  --pattern-drawer-glow: rgba(255, 255, 255, 0.2);
+}
